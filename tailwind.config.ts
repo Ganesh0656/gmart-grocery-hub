@@ -57,6 +57,12 @@ export default {
           border: "hsl(var(--sidebar-border))",
           ring: "hsl(var(--sidebar-ring))",
         },
+        gmart: {
+          green: "hsl(var(--gmart-green))",
+          orange: "hsl(var(--gmart-orange))",
+          grey: "hsl(var(--gmart-grey))",
+          "dark-grey": "hsl(var(--gmart-dark-grey))",
+        },
       },
       borderRadius: {
         lg: "var(--radius)",
