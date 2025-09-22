@@ -80,15 +80,30 @@ export default function ProductDetailsPage() {
         rating,
         comment,
         created_at,
-        user_id,
-        profiles!inner (
-          full_name
-        )
+        user_id
       `)
       .eq('product_id', productId)
       .order('created_at', { ascending: false });
 
-    setReviews(data || []);
+    if (data) {
+      // Fetch user profiles separately to avoid relationship issues
+      const userIds = [...new Set(data.map(review => review.user_id))];
+      const { data: profiles } = await supabase
+        .from('profiles')
+        .select('user_id, full_name')
+        .in('user_id', userIds);
+
+      const profileMap = new Map(profiles?.map(p => [p.user_id, p]) || []);
+      
+      const reviewsWithProfiles = data.map(review => ({
+        ...review,
+        profiles: profileMap.get(review.user_id) || { full_name: 'Anonymous User' }
+      }));
+
+      setReviews(reviewsWithProfiles);
+    } else {
+      setReviews([]);
+    }
   };
 
   const handleAddToCart = () => {
