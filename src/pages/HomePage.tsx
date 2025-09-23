@@ -5,6 +5,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { supabase } from '@/integrations/supabase/client';
+import freshProduceImg from '@/assets/category-fresh-produce.jpg';
+import dairyImg from '@/assets/category-dairy.jpg';
+import meatImg from '@/assets/category-meat.jpg';
+import bakeryImg from '@/assets/category-bakery.jpg';
+import beveragesImg from '@/assets/category-beverages.jpg';
+import frozenImg from '@/assets/category-frozen.jpg';
+import heroImg from '@/assets/hero-grocery-store.jpg';
 
 interface Category {
   id: string;
@@ -30,6 +37,16 @@ export default function HomePage() {
     fetchCategories();
     fetchFeaturedProducts();
   }, []);
+
+  // Category image mapping
+  const categoryImages: Record<string, string> = {
+    'Fresh Produce': freshProduceImg,
+    'Dairy Products': dairyImg,
+    'Meat & Poultry': meatImg,
+    'Bakery': bakeryImg,
+    'Beverages': beveragesImg,
+    'Frozen Foods': frozenImg,
+  };
 
   const fetchCategories = async () => {
     const { data } = await supabase
@@ -69,25 +86,27 @@ export default function HomePage() {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-gmart-green to-gmart-green/80 text-white py-16 md:py-24">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+      <section 
+        className="relative h-[90vh] bg-cover bg-center bg-no-repeat flex items-center justify-center text-white"
+        style={{ backgroundImage: `url(${heroImg})` }}
+      >
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/30"></div>
+        <div className="relative z-10 text-center max-w-4xl px-4">
+          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
             Welcome to <span className="text-gmart-orange">Gmart</span>
           </h1>
-          <p className="text-xl md:text-2xl mb-8 opacity-90">
-            Your one-stop shop for fresh groceries and daily essentials
+          <p className="text-xl md:text-2xl mb-8 text-gray-200 max-w-3xl mx-auto leading-relaxed">
+            Your one-stop destination for fresh groceries, quality products, and exceptional service delivered right to your door.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/categories">
-              <Button size="lg" variant="secondary" className="bg-white text-gmart-green hover:bg-white/90">
+              <Button size="lg" className="bg-gmart-green hover:bg-gmart-green/90 text-white px-8 py-4 text-lg font-semibold rounded-full shadow-lg hover:shadow-xl transition-all">
                 Shop Now <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
-            <Link to="/contact">
-              <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-gmart-green">
-                Contact Us
-              </Button>
-            </Link>
+            <Button variant="outline" size="lg" className="border-white text-white hover:bg-white hover:text-gmart-green px-8 py-4 text-lg font-semibold rounded-full">
+              Contact Us
+            </Button>
           </div>
         </div>
       </section>
@@ -115,36 +134,31 @@ export default function HomePage() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-16 bg-muted/50">
+      <section className="py-20 bg-muted/50">
         <div className="container mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold mb-4">Shop by Category</h2>
-            <p className="text-muted-foreground">Browse our wide range of fresh groceries</p>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold mb-4">Shop by Category</h2>
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">Discover fresh products across all our carefully curated categories</p>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {categories.map((category) => (
               <Link key={category.id} to={`/categories/${category.id}`}>
-                <Card className="text-center hover:shadow-lg transition-all duration-300 hover:scale-105 cursor-pointer border-gmart-green/20">
-                  <CardContent className="p-6">
-                    <div className="w-20 h-20 bg-gmart-green/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <img
-                        src={category.image_url}
-                        alt={category.name}
-                        className="w-12 h-12 object-cover rounded-full"
-                      />
+                <Card className="overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:scale-105 border-0 bg-white dark:bg-gray-900">
+                  <div className="aspect-video relative">
+                    <img
+                      src={categoryImages[category.name] || category.image_url}
+                      alt={category.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+                    <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
+                      <h3 className="text-2xl font-bold mb-2">{category.name}</h3>
+                      <p className="text-gray-200 text-sm">{category.description}</p>
                     </div>
-                    <h3 className="font-semibold text-gmart-green">{category.name}</h3>
-                  </CardContent>
+                  </div>
                 </Card>
               </Link>
             ))}
-          </div>
-          <div className="text-center mt-8">
-            <Link to="/categories">
-              <Button variant="outline" className="border-gmart-green text-gmart-green hover:bg-gmart-green hover:text-white">
-                View All Categories <ArrowRight className="ml-2 h-4 w-4" />
-              </Button>
-            </Link>
           </div>
         </div>
       </section>
@@ -192,17 +206,22 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 bg-gmart-green text-white">
+      <section className="py-20 bg-gradient-to-r from-gmart-green to-gmart-orange text-white">
         <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Start Shopping?</h2>
-          <p className="text-xl mb-8 opacity-90">
-            Join thousands of happy customers who trust Gmart for their grocery needs
-          </p>
-          <Link to="/auth">
-            <Button size="lg" variant="secondary" className="bg-white text-gmart-green hover:bg-white/90">
-              Sign Up Today <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+          <div className="max-w-4xl mx-auto">
+            <h2 className="text-4xl md:text-5xl font-bold mb-6">Ready to Start Shopping?</h2>
+            <p className="text-xl md:text-2xl mb-8 text-white/90 leading-relaxed">
+              Join thousands of satisfied customers who trust Gmart for their grocery needs. 
+              Fresh products, competitive prices, and exceptional service await you.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Link to="/categories">
+                <Button size="lg" variant="secondary" className="bg-white text-gmart-green hover:bg-gray-100 px-8 py-4 text-lg font-semibold rounded-full shadow-lg">
+                  Browse Categories <ArrowRight className="ml-2 h-5 w-5" />
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>
