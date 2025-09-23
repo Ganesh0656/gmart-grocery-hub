@@ -1,10 +1,12 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Sun, Moon, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, Sun, Moon, Menu, X, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/hooks/useCart';
+import { AuthDialog } from './AuthDialog';
 import { useState } from 'react';
 
 export function Header() {
@@ -13,6 +15,7 @@ export function Header() {
   const { cartCount } = useCart();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [authDialogOpen, setAuthDialogOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -80,8 +83,8 @@ export function Header() {
 
           {/* User Menu */}
           {user ? (
-            <div className="flex items-center space-x-2">
-              <Link to="/profile">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -89,24 +92,29 @@ export function Header() {
                 >
                   <User className="h-5 w-5" />
                 </Button>
-              </Link>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={signOut}
-                className="hidden md:flex"
-              >
-                Sign Out
-              </Button>
-            </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                <DropdownMenuItem asChild>
+                  <Link to="/profile" className="flex items-center">
+                    <User className="h-4 w-4 mr-2" />
+                    Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={signOut} className="text-destructive">
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <div className="flex items-center space-x-2">
-              <Link to="/auth">
-                <Button variant="outline" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setAuthDialogOpen(true)}
+            >
+              Sign In
+            </Button>
           )}
 
           {/* Mobile Menu Toggle */}
@@ -153,6 +161,11 @@ export function Header() {
           </nav>
         </div>
       )}
+
+      <AuthDialog 
+        open={authDialogOpen} 
+        onOpenChange={setAuthDialogOpen} 
+      />
     </header>
   );
 }
