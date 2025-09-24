@@ -1,21 +1,17 @@
 import { Link, useLocation } from 'react-router-dom';
-import { ShoppingCart, User, Sun, Moon, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, User, Menu, X, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { useTheme } from '@/contexts/ThemeContext';
 import { useAuth } from '@/contexts/AuthContext';
 import { useCart } from '@/hooks/useCart';
-import { AuthDialog } from './AuthDialog';
 import { useState } from 'react';
 
 export function Header() {
-  const { theme, toggleTheme } = useTheme();
   const { user, signOut } = useAuth();
   const { cartCount } = useCart();
   const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [authDialogOpen, setAuthDialogOpen] = useState(false);
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -53,16 +49,6 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center space-x-2">
-          {/* Theme Toggle */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleTheme}
-            className="text-muted-foreground hover:text-gmart-green"
-          >
-            {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
-          </Button>
-
           {/* Cart */}
           {user && (
             <Link to="/cart">
@@ -108,13 +94,14 @@ export function Header() {
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setAuthDialogOpen(true)}
-            >
-              Sign In
-            </Button>
+            <Link to="/login">
+              <Button 
+                variant="outline" 
+                size="sm"
+              >
+                Login
+              </Button>
+            </Link>
           )}
 
           {/* Mobile Menu Toggle */}
@@ -161,11 +148,6 @@ export function Header() {
           </nav>
         </div>
       )}
-
-      <AuthDialog 
-        open={authDialogOpen} 
-        onOpenChange={setAuthDialogOpen} 
-      />
     </header>
   );
 }

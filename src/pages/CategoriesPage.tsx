@@ -20,8 +20,6 @@ interface Product {
   name: string;
   price: number;
   image_url: string;
-  rating: number;
-  review_count: number;
   categories: {
     name: string;
   };
@@ -75,8 +73,6 @@ export default function CategoriesPage() {
         name,
         price,
         image_url,
-        rating,
-        review_count,
         categories (
           name
         )
@@ -93,8 +89,6 @@ export default function CategoriesPage() {
         name,
         price,
         image_url,
-        rating,
-        review_count,
         categories (
           name
         )
@@ -115,7 +109,7 @@ export default function CategoriesPage() {
         case 'price-high':
           return b.price - a.price;
         case 'rating':
-          return b.rating - a.rating;
+          return 0; // Remove rating sort
         case 'name':
         default:
           return a.name.localeCompare(b.name);
@@ -204,7 +198,6 @@ export default function CategoriesPage() {
               <SelectItem value="name">Name A-Z</SelectItem>
               <SelectItem value="price-low">Price: Low to High</SelectItem>
               <SelectItem value="price-high">Price: High to Low</SelectItem>
-              <SelectItem value="rating">Highest Rated</SelectItem>
             </SelectContent>
           </Select>
         </div>
@@ -226,11 +219,6 @@ export default function CategoriesPage() {
                   <span className="text-xl font-bold text-gmart-green">
                     ${product.price.toFixed(2)}
                   </span>
-                  <div className="flex items-center space-x-1">
-                    <span className="text-sm text-muted-foreground">
-                      ⭐ {product.rating} ({product.review_count})
-                    </span>
-                  </div>
                 </div>
                 <Link to={`/products/${product.id}`}>
                   <Button className="w-full bg-gmart-green hover:bg-gmart-green/90">
