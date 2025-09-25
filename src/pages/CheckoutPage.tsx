@@ -78,8 +78,8 @@ export default function CheckoutPage() {
         description: "You will be redirected to payment processing",
       });
 
-      // Navigate to payment page with order ID
-      navigate(`/payment/${order.id}`);
+      // Navigate to order confirmation page
+      navigate(`/order-confirmation/${order.id}`);
       
     } catch (error) {
       console.error('Error placing order:', error);
